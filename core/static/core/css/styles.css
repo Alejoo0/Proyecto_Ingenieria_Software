@@ -1,0 +1,51 @@
+*{
+    margin:0;
+    padding:0;
+}
+.logo {
+    max-width: 10vh;
+    height: auto;
+}
+
+.custom-navbar{
+    background-color: #0C252C;
+}
+
+.custom-footer {
+    background-color: #0C252C;
+    color: #fff !important;
+    padding: 20px;
+    text-align: center;
+}
+
+.carousel{
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+}
+
+html, body {
+    height: 100%;
+}
+
+small{
+    display: none;
+}
+
+#fondo{
+    background: linear-gradient(120deg, #e85c04, #9a031e);
+}
+
+.card-img-top{
+    max-width: 14vh;
+}
+
+.form-login input{
+    height: 40px;
+    width: 100%;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid #e85c04;
+    padding-left: 15px;
+    border-bottom-width: 2px;
+    transition: all 0,3s ease;
+}
