@@ -1,25 +1,15 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm
-from django.contrib import messages
-from django.contrib.auth import authenticate, login
 
 def home(request):
-    return render(request, 'core/home.html')
+    return render (request, 'core/home.html')
 
 def registro(request):
-
-    data = {
-        'form': CustomUserCreationForm()
-    }
-
     if request.method == 'POST':
-        formulario = CustomUserCreationForm(data=request.POST)
-        if formulario.is_valid():
-            formulario.save()
-            user = authenticate(username = formulario.cleaned_data["username"], password = formulario.cleaned_data["password1"])
-            login(request, user)
-            messages.success(request, "Te has registrado correctamente")
-            return redirect(to="home")
-        data["form"] = formulario
-
-    return render (request, 'registration/registro.html',data)
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # Redirige a la página de login después de registrar
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'registration/registro.html', {'form': form})

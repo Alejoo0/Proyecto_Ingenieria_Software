@@ -108,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es-cl'
 
-TIME_ZONE = 'America/Chile/Santiago'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
