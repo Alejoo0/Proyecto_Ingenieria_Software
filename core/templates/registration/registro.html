@@ -19,7 +19,6 @@
                         <hr>
                         <img src="{% static 'core/img/logo_SCHOLAR_FLAME.jpg' %}" class="card-img-top" alt="logo-login">
                         <form method="post" class="form-login mx-auto">
-                            {% csrf_token %}
                             {{ form }}
                             <br>
                             <button type="submit" class="btn btn-outline-warning w-100">Registrarse</button>

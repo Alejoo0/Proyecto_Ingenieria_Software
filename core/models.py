@@ -13,4 +13,4 @@ class UsuarioDetalles(models.Model):
     nivel_educacional = models.CharField(max_length=1, choices=NIVELES_CHOICES)
 
     def __str__(self):
-        return self.user.email
+        return f"{self.user.first_name} {self.user.last_name}"
