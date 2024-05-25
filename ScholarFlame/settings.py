@@ -29,7 +29,7 @@ ALLOWED_HOSTS = []
 
 LOGIN_REDIRECT_URL = '/pregunta'
 LOGOUT_REDIRECT_URL = '/'
-
+PREGUNTA_REDIRECT_URL='/'
 # Application definition
 
 INSTALLED_APPS = [

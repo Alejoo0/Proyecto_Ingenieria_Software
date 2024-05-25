@@ -24,6 +24,12 @@
                         <p>{{ pregunta_display }}</p> 
                         <p>Responda correctamente la pregunta</p>
 
+                        {% if error_message %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error_message }}
+                            </div>
+                        {% endif %}
+
                         <form method="post" class="form-login mx-auto">
                             {% csrf_token %}
                             <div class="mb-3">
