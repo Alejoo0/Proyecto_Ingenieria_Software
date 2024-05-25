@@ -23,7 +23,8 @@
                         <h4>¡Bienvenido!</h4>
                         <p>Ingresa tu usuario y contraseña para iniciar sesión</p>
 
-                        <form method="post" action="{% url 'pregunta' %}"  class="form-login mx-auto">
+
+                        <form method="post" class="form-login mx-auto">
 
                             {% csrf_token %}
                             
@@ -33,6 +34,7 @@
 
                             <button  type="submit" class="btn btn-outline-warning w-100">Iniciar sesión</button>
 
+                            
                         </form>
 
                         <br>
