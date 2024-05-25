@@ -2,8 +2,7 @@ import re
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-from .models import UsuarioDetalles, NIVELES_CHOICES
-
+from .models import UsuarioDetalles, NIVELES_CHOICES, PREGUNTA_CHOICES
 User = get_user_model()
 
 class CustomUserCreationForm(UserCreationForm):
@@ -11,10 +10,12 @@ class CustomUserCreationForm(UserCreationForm):
     apellidos = forms.CharField(label='Apellidos', max_length=30)
     rut = forms.CharField(label='Rut', max_length=15)
     nivel_educacional = forms.ChoiceField(label='Nivel Educativo', choices=NIVELES_CHOICES)
+    pregunta=forms.ChoiceField(label='Pregunta segguridad',choices=PREGUNTA_CHOICES)
+    respuesta=forms.CharField(label='Respuesta', max_length=30)
 
     class Meta:
         model = User
-        fields = ['nombre','apellidos', 'email', 'username', 'rut', 'nivel_educacional', 'password1', 'password2']
+        fields = ['nombre','apellidos', 'email', 'username', 'rut', 'nivel_educacional', 'password1', 'password2','pregunta','respuesta']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -59,7 +60,9 @@ class CustomUserCreationForm(UserCreationForm):
         UsuarioDetalles.objects.create(
             user=user,
             rut=self.cleaned_data['rut'],
-            nivel_educacional=self.cleaned_data['nivel_educacional']
+            nivel_educacional=self.cleaned_data['nivel_educacional'],
+            pregunta=self.cleaned_data['pregunta'],
+            respuesta=self.cleaned_data['respuesta']
         )
         return user
     

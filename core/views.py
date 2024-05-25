@@ -4,6 +4,10 @@ from .forms import CustomUserCreationForm
 def home(request):
     return render (request, 'core/home.html')
 
+def pregunta(request):
+    
+    return render(request,'registration/pregunta.html')
+
 def registro(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)

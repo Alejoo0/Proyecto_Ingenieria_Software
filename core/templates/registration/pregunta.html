@@ -17,28 +17,24 @@
                 <div class="card text-center">
                     <div class="card-body">
 
-                        <h3>Iniciar sesión</h3>
+                        <h3>Pregunta de Seguridad</h3>
                         <hr>
                         <img src=" {% static 'core/img/logo_SCHOLAR_FLAME.jpg' %} " class="card-img-top" alt="logo-login">
                         <h4>¡Bienvenido!</h4>
-                        <p>Ingresa tu usuario y contraseña para iniciar sesión</p>
+                        <p>{{ usuario_detalles.pregunta }}</p> 
+                        <p>Responda correctamente la pregunta</p>
 
-                        <form method="post" action="{% url 'pregunta' %}"  class="form-login mx-auto">
-
-                            {% csrf_token %}
-                            
-                            {{ form }}
-
-                            <br>
-
-                            <button  type="submit" class="btn btn-outline-warning w-100">Iniciar sesión</button>
+                        <form class="form-login mx-auto">
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Respuesta">
+                              </div>
+                            <button type="submit" class="btn btn-outline-warning w-100">Verificar</button>
 
                         </form>
 
                         <br>
 
-                        <strong>¿Eres nuevo en Scholar flame?</strong>
-                        <p><a href=" {% url 'registro' %} " class="text-decoration-none">Crear cuenta</a></p>
+                        
                     </div>
                 </div>
             </div>
