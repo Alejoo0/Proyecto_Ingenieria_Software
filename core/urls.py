@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import home, registro
+from . import views
 
 urlpatterns = [
-    path('', home, name = "home"),
-    path('registro/', registro, name="registro")
+    path('', views.home, name='home'),  # Por ejemplo, una ruta a la vista home
+    path('registro/', views.registro, name='registro'),
 ]

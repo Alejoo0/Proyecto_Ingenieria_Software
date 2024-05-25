@@ -62,3 +62,4 @@ class CustomUserCreationForm(UserCreationForm):
             nivel_educacional=self.cleaned_data['nivel_educacional']
         )
         return user
+    

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autenticación</title>
+    <title>Registro de Usuario</title>
     <link rel="stylesheet" href="{% static 'core/css/styles.css' %}" />
     <link rel="stylesheet" href="{% static 'core/css/bootstrap.css' %}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
@@ -15,28 +15,19 @@
             <div class="col-xl-6 col-lg-8 col-md-10 col-sm-12">
                 <div class="card text-center">
                     <div class="card-body">
-
                         <h3>Registro de Usuario</h3>
                         <hr>
-                        <img src=" {% static 'core/img/logo_SCHOLAR_FLAME.jpg' %} " class="card-img-top" alt="logo-login">
-
-                        <form class="form-login mx-auto">
-
+                        <img src="{% static 'core/img/logo_SCHOLAR_FLAME.jpg' %}" class="card-img-top" alt="logo-login">
+                        <form method="post" class="form-login mx-auto">
                             {{ form }}
-
                             <br>
-
                             <button type="submit" class="btn btn-outline-warning w-100">Registrarse</button>
-                            
                         </form>
-                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>
-
 </html>

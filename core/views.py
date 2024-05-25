@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm
 
 def home(request):
-    return render(request, 'core/home.html')
+    return render (request, 'core/home.html')
 
 def registro(request):
     if request.method == 'POST':
