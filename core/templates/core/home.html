@@ -29,11 +29,11 @@
                 {% if user.is_authenticated %}
 
                 <li class="nav-item">
-                    <a class="nav-link" href=" {% url 'logout' %} ">cerrar sesión</a>
+                    <a class="nav-link" href="#"> !Hola!  {{ user.username }} </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#"> !Hola!  {{ user.username }} </a>
+                    <a class="nav-link" href=" {% url 'home' %} ">cerrar sesión</a>
                 </li>
 
                 {% else %}
