@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autenticación</title>
+    <title>Pregunta de Seguridad</title>
     <link rel="stylesheet" href="{% static 'core/css/bootstrap.css' %}" />
     <link rel="stylesheet" href="{% static 'core/css/styles.css' %}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
@@ -19,22 +19,20 @@
 
                         <h3>Pregunta de Seguridad</h3>
                         <hr>
-                        <img src=" {% static 'core/img/logo_SCHOLAR_FLAME.jpg' %} " class="card-img-top" alt="logo-login">
+                        <img src="{% static 'core/img/logo_SCHOLAR_FLAME.jpg' %}" class="card-img-top" alt="logo-login">
                         <h4>¡Bienvenido!</h4>
-                        <p>{{ usuario_detalles.pregunta }}</p> 
+                        <p>{{ pregunta_display }}</p> 
                         <p>Responda correctamente la pregunta</p>
 
-                        <form class="form-login mx-auto">
+                        <form method="post" class="form-login mx-auto">
+                            {% csrf_token %}
                             <div class="mb-3">
-                                <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Respuesta">
-                              </div>
+                                <input type="text" name="respuesta" class="form-control" id="formGroupExampleInput" placeholder="Respuesta" required>
+                            </div>
                             <button type="submit" class="btn btn-outline-warning w-100">Verificar</button>
-
                         </form>
 
                         <br>
-
-                        
                     </div>
                 </div>
             </div>
@@ -42,6 +40,5 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-
 </body>
-</html> 
+</html>
