@@ -27,6 +27,12 @@ class CustomUserCreationForm(UserCreationForm):
         
         return email
     
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError('Este nombre de usuario ya está registrado.')
+        return username
+    
     def validar_rut(self, rut):
         rut = rut.replace('.', '').upper()
         
