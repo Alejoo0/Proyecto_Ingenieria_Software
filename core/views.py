@@ -24,31 +24,31 @@ User = get_user_model()
 def has_exceeded_failure_limit(username, failure_limit=3, within_last_minutes=5):
     user = User.objects.filter(username=username).first()
     if user is None:
-        return False, None, 0
+        return False, None
     
     attempts_count = FailedLoginAttempt.get_attempts_count(user, within_last_minutes)
     if attempts_count >= failure_limit:
-        last_attempt = FailedLoginAttempt.objects.filter(user=user).latest('timestamp')
-        remaining_time = (last_attempt.timestamp + timezone.timedelta(minutes=within_last_minutes) - timezone.now()).total_seconds()
-        return True, user, max(remaining_time, 0)
+        return True, user
     
-    return False, user, 0
+    return False, user
     
 
 def login_view(request):
     intentos = -1
+    cuenta_bloqueada = None
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            exceeded_limit, user, remaining_time= has_exceeded_failure_limit(username)
-            
+            exceeded_limit, user= has_exceeded_failure_limit(username)
             if user.check_password(password) == False:
                 FailedLoginAttempt.record_attempt(user=user)
                 contador=FailedLoginAttempt.get_attempts_count(User.objects.filter(username=username).first(), 5)
             if exceeded_limit:
                 form.add_error(None, 'Tu cuenta fue bloqueada debido a que haz excedido el límite de intentos. Intentalo otra vez en 5 minutos')
+                exceeded_limit, user= has_exceeded_failure_limit(username)
+                cuenta_bloqueada = exceeded_limit
             else:
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
@@ -62,4 +62,4 @@ def login_view(request):
                 
     else:
         form = LoginForm()
-    return render(request, 'registration/login.html', {'form': form, 'intentos': intentos})
+    return render(request, 'registration/login.html', {'form': form, 'intentos': intentos, 'cuenta_bloqueada':cuenta_bloqueada})

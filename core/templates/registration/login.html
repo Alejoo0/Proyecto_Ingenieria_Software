@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'core/css/bootstrap.css' %}" />
     <link rel="stylesheet" href="{% static 'core/css/styles.css' %}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+    
 </head>
 
 <body id="fondo" class="d-flex justify-content-center align-items-center vh-100">
@@ -15,8 +16,7 @@
         <div class="row justify-content-center">
             <div class="col-xl-4 col-lg-6 col-md-8 col-sm-12">
                 <div class="card text-center">
-                    <div class="card-body">
-
+                    <div class="card-body">    
                         <h3>Iniciar sesión</h3>
                         <hr>
                         <img src=" {% static 'core/img/logo_SCHOLAR_FLAME.jpg' %} " class="card-img-top" alt="logo-login">
@@ -29,6 +29,7 @@
                             {{ form.as_p }}
                             <button type="submit" class="btn btn-outline-warning w-100">Iniciar sesión</button>
                         </form>
+
                         {% if form.errors %}
                             <div class="errors">
                                 {% for field in form %}
@@ -39,8 +40,13 @@
                             </div>
                         {% endif %}
                         <br>
-                    
-                        {% if intentos < 0 %}
+                        {%if intentos == 0 and cuenta_bloqueada%}
+                            <div id="timer">
+                                <h1>La cuenta será desbloqueada en:</h1>
+                                <p id="countdown"></p>
+                            </div>
+                            <script src="../core/static/core/js/script.js"></script>
+                        {% elif intentos < 0 %}
                             <p></p>
                         {% else  %}
                             <p>Intentos restantes: {{ intentos }}</p>
