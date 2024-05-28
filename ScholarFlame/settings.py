@@ -72,6 +72,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ScholarFlame.wsgi.application'
 
+#envio de link por correo ( se muestra en la consola de comandos)
+
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
