@@ -47,6 +47,7 @@ def login_view(request):
                 contador=FailedLoginAttempt.get_attempts_count(User.objects.filter(username=username).first(), 5)
             if exceeded_limit:
                 form.add_error(None, 'Tu cuenta fue bloqueada debido a que haz excedido el límite de intentos. Intentalo otra vez en 5 minutos')
+                form.add_error(None, 'Cualquier intento antes del termino del temporizador lo reiniciará, intentalo una vez termine')
                 exceeded_limit, user= has_exceeded_failure_limit(username)
                 cuenta_bloqueada = exceeded_limit
             else:
@@ -59,7 +60,7 @@ def login_view(request):
                     form.add_error(None, 'Nombre o contraseña incorrectos')
                     
         intentos = 4 - contador
-                
+        print(cuenta_bloqueada)            
     else:
         form = LoginForm()
     return render(request, 'registration/login.html', {'form': form, 'intentos': intentos, 'cuenta_bloqueada':cuenta_bloqueada})

@@ -40,9 +40,9 @@
                             </div>
                         {% endif %}
                         <br>
-                        {%if intentos == 0 and cuenta_bloqueada%}
+                        {%if cuenta_bloqueada%}
                             <div id="timer">
-                                <h1>La cuenta será desbloqueada en:</h1>
+                                <h5>La cuenta será desbloqueada en:</h5>
                                 <p id="countdown"></p>
                             </div>
                             <script src="../core/static/core/js/script.js"></script>
