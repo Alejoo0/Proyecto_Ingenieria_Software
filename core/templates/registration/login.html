@@ -8,26 +8,6 @@
     <link rel="stylesheet" href="{% static 'core/css/bootstrap.css' %}" />
     <link rel="stylesheet" href="{% static 'core/css/styles.css' %}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var remainingTime = document.getElementById("remaining-time").value;
-            remainingTime = parseInt(remainingTime, 10);
-            if (remainingTime > 0) {
-                var countdownElement = document.getElementById("countdown");
-                countdownElement.style.display = "block";
-                var countdownInterval = setInterval(function() {
-                    var minutes = Math.floor(remainingTime / 60);
-                    var seconds = Math.floor(remainingTime % 60);
-                    countdownElement.textContent = minutes + " minutes " + seconds + " seconds remaining";
-                    remainingTime--;
-                    if (remainingTime <= 0) {
-                        clearInterval(countdownInterval);
-                        countdownElement.textContent = "You can try logging in again.";
-                    }
-                }, 1000);
-            }
-        });
-    </script>
 </head>
 
 <body id="fondo" class="d-flex justify-content-center align-items-center vh-100">
@@ -59,13 +39,18 @@
                             </div>
                         {% endif %}
                         <br>
+                    
+                        {% if intentos < 0 %}
+                            <p></p>
+                        {% else  %}
+                            <p>Intentos restantes: {{ intentos }}</p>
+                        {% endif %}
 
                         <strong>¿Eres nuevo en Scholar flame?</strong>
                         <p><a href=" {% url 'registro' %} " class="text-decoration-none">Crear cuenta</a></p>
 
-                    <input type="hidden" id="remaining-time" value="{{ remaining_time }}">
-                    <div id="countdown" style="display: none;"></div>
-                    <p>Remaining Time: {{ remaining_time }}</p>
+                    </div>
+                    
                 </div>
             </div>
         </div>

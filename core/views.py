@@ -35,16 +35,18 @@ def has_exceeded_failure_limit(username, failure_limit=3, within_last_minutes=5)
     return False, user, 0
     
 
-
 def login_view(request):
+    intentos = -1
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             exceeded_limit, user, remaining_time= has_exceeded_failure_limit(username)
+            
             if user.check_password(password) == False:
                 FailedLoginAttempt.record_attempt(user=user)
+                contador=FailedLoginAttempt.get_attempts_count(User.objects.filter(username=username).first(), 5)
             if exceeded_limit:
                 form.add_error(None, 'Tu cuenta fue bloqueada debido a que haz excedido el límite de intentos. Intentalo otra vez en 5 minutos')
             else:
@@ -54,8 +56,10 @@ def login_view(request):
                     login(request, user)
                     return redirect('home')  # Redirige a la página de inicio
                 else:
-                    form.add_error(None, 'Invalid username or password')
+                    form.add_error(None, 'Nombre o contraseña incorrectos')
+                    
+        intentos = 4 - contador
                 
     else:
         form = LoginForm()
-    return render(request, 'registration/login.html', {'form': form, 'remaining-time': remaining_time})
+    return render(request, 'registration/login.html', {'form': form, 'intentos': intentos})
