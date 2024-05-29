@@ -10,11 +10,10 @@ class CustomUserCreationForm(UserCreationForm):
     nombre = forms.CharField(label='Nombre', max_length=20)
     apellidos = forms.CharField(label='Apellidos', max_length=30)
     rut = forms.CharField(label='Rut', max_length=15)
-    nivel_educacional = forms.ChoiceField(label='Nivel Educativo', choices=NIVELES_CHOICES)
 
     class Meta:
         model = User
-        fields = ['nombre','apellidos', 'email', 'username', 'rut', 'nivel_educacional', 'password1', 'password2']
+        fields = ['nombre','apellidos', 'email', 'username', 'rut', 'password1', 'password2']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -55,11 +54,11 @@ class CustomUserCreationForm(UserCreationForm):
         user = super().save(commit=False)
         user.first_name = self.cleaned_data['nombre']
         user.last_name = self.cleaned_data['apellidos']
+        user.rut = self.cleaned_data['rut']
         user.save()
         UsuarioDetalles.objects.create(
             user=user,
             rut=self.cleaned_data['rut'],
-            nivel_educacional=self.cleaned_data['nivel_educacional']
         )
         return user
     
