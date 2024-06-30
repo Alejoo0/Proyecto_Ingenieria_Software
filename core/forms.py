@@ -2,7 +2,7 @@ import re
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-from .models import UsuarioDetalles, NIVELES_CHOICES
+from .models import *
 
 User = get_user_model()
 
@@ -11,17 +11,15 @@ class CustomUserCreationForm(UserCreationForm):
     apellidos = forms.CharField(label='Apellidos', max_length=30)
     rut = forms.CharField(label='Rut', max_length=15)
     nivel_educacional = forms.ChoiceField(label='Nivel Educativo', choices=NIVELES_CHOICES)
+    es_estudiante = forms.BooleanField(label='Es Estudiante', required=False)
+    es_profesor = forms.BooleanField(label='Es Profesor', required=False)
 
     class Meta:
         model = User
-        fields = ['nombre','apellidos', 'email', 'username', 'rut', 'nivel_educacional', 'password1', 'password2']
+        fields = ['nombre', 'apellidos', 'email', 'username', 'rut', 'nivel_educacional', 'password1', 'password2', 'es_estudiante', 'es_profesor']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        dominios = ['gmail.com', 'outlook.com', 'hotmail.com', 'gmail.cl', 'outlook.cl', 'hotmail.cl']
-        dominio = email.split('@')[-1]
-        if dominio not in dominios :
-            raise forms.ValidationError('El correo no cumple con el formato \n Ej: usuario@gmail.cl')
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError('Este correo ya está registrado.')
         
@@ -59,7 +57,9 @@ class CustomUserCreationForm(UserCreationForm):
         UsuarioDetalles.objects.create(
             user=user,
             rut=self.cleaned_data['rut'],
-            nivel_educacional=self.cleaned_data['nivel_educacional']
+            nivel_educacional=self.cleaned_data['nivel_educacional'],
+            es_estudiante=self.cleaned_data['es_estudiante'],
+            es_profesor=self.cleaned_data['es_profesor']
         )
         return user
-    
+

@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from .forms import CustomUserCreationForm
-from .models import UsuarioDetalles, NIVELES_CHOICES
 from django.contrib.auth.decorators import login_required
+from .forms import *
+from .models import *
 
 def home(request):
-    return render (request, 'core/home.html')
+    return render(request, 'core/home.html')
 
 def registro(request):
     if request.method == 'POST':
@@ -31,3 +31,4 @@ def home(request):
         segundo_valor_nivel = "No especificado"
     
     return render(request, 'core/home.html', {'nivel_educacional': segundo_valor_nivel})
+
