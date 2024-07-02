@@ -1,13 +1,14 @@
 from django.contrib import admin
-from .models import UsuarioDetalles
+from .models import Curso, Profesor, Estudiante
 # Register your models here.
 
-class UsuarioDetallesAdmin(admin.ModelAdmin):
-    list_display = ('user', 'rut', 'nivel_educacional')
+class CursoAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'get_instructor')
 
-from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth import get_user_model
+    def get_instructor(self, obj):
+        return obj.instructor.user.username
+    get_instructor.short_description = 'Instructor'
 
-User = get_user_model()
-
-admin.site.register(UsuarioDetalles)
+admin.site.register(Curso, CursoAdmin)
+admin.site.register(Profesor)
+admin.site.register(Estudiante)

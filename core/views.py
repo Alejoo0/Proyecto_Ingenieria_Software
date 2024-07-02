@@ -1,22 +1,34 @@
-from django.shortcuts import render, redirect
-from .forms import CustomUserCreationForm
-from django.contrib.auth.views import PasswordResetView
+from django.shortcuts           import render, redirect
+from django.contrib.auth.views  import PasswordResetView
 from django.contrib.auth.models import User
-from django.urls import reverse_lazy
-from django import forms
+from django.urls                import reverse_lazy
+from django                     import forms
+from django.shortcuts           import render
+from .models                    import Curso
+from django.contrib.auth.decorators import login_required
+from .models import Estudiante
 
+@login_required
 def home(request):
     return render (request, 'core/home.html')
 
-def registro(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')  # Redirige a la página de login después de registrar
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'registration/registro.html', {'form': form})
+def cursos(request):
+    try:
+        estudiante = Estudiante.objects.get(user=request.user)
+        cursos = estudiante.cursos_inscritos.all()
+        return render(request, 'core/cursos.html', {'cursos': cursos})
+    except Estudiante.DoesNotExist:
+        return redirect('home')
+
+def cursos(request):
+    try:
+        estudiante = Estudiante.objects.get(user=request.user)
+        cursos = estudiante.cursos_inscritos.all()
+        return render(request, 'core/cursos.html', {'cursos': cursos})
+    except Estudiante.DoesNotExist:
+        return redirect('home')
+
+
 
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'registration/password_reset_form.html'

@@ -22,11 +22,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">Noticias</a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'cursos' %}">Cursos</a>
+                </li>
+
             </ul>
             
             <ul class="navbar-nav">
-                
-                {% if user.is_authenticated %}
 
                 <li class="nav-item">
                     <a class="nav-link" href="#"> !Hola!  {{ user.username }} </a>
@@ -41,17 +44,6 @@
 
                 </li>
 
-                {% else %}
-                
-                <li class="nav-item">
-                    <a class="nav-link" href=" {% url 'login' %} ">Iniciar sesión</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href=" {% url 'registro' %} ">Registrate</a>
-                </li>
-
-                {% endif %}
             </ul>
         </div>
     </div>

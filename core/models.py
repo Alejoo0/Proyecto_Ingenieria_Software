@@ -7,10 +7,26 @@ NIVELES_CHOICES = [
     ("S", "Superior")
 ]
 
-class UsuarioDetalles(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    rut = models.CharField(max_length=15)
-    nivel_educacional = models.CharField(max_length=1, choices=NIVELES_CHOICES)
+class Profesor(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    especialidad = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}"
+        return self.user.username
+
+class Curso(models.Model):
+    nombre = models.CharField(max_length=100)
+    instructor = models.ForeignKey(Profesor, on_delete=models.CASCADE)
+    descripcion = models.TextField()
+
+    def __str__(self):
+        return self.nombre
+
+class Estudiante(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    nivel_educacional = models.CharField(max_length=1, choices=NIVELES_CHOICES)
+    rut = models.CharField(max_length=12)
+    cursos_inscritos = models.ManyToManyField(Curso, blank=True)
+
+    def __str__(self):
+        return self.user.username
