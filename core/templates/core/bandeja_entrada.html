@@ -2,58 +2,6 @@
 {% load static %}
 
 {% block content %}
-<nav class="navbar navbar-expand-lg custom-navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'home' %}">
-            <img src="{% static 'core/img/logo_SCHOLAR_FLAME.jpg' %}" id="Logo" alt="Logo" class="logo">
-        </a>
-        
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Inicio</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'noticias' %}active{% endif %}" href="#">Noticias</a>
-                </li>
-                {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'mensajes' %}active{% endif %}" href="{% url 'bandeja_entrada' %}">Mensajes</a>
-                </li>
-                {% endif %}
-            </ul>
-            
-            <ul class="navbar-nav ms-auto">
-                {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <span class="nav-link">Educación {{ nivel_educacional }}</span>
-                </li>
-                <li class="nav-item">
-                    <span class="nav-link">¡Hola, {{ user.username }}!</span>
-                </li>
-                <li class="nav-item">
-                    <form method="POST" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="nav-link btn btn-link text-decoration-none">Cerrar sesión</button>
-                    </form>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'registro' %}">Regístrate</a>
-                </li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-</nav>
-
 <div class="container mt-4 mb-5">
     <div class="row justify-content-center">
         <div class="col-lg-6">
@@ -75,10 +23,4 @@
         </div>
     </div>
 </div>
-
-<footer class="footer mt-auto py-3 custom-footer">
-    <div class="container text-center">
-        <span>&copy; 2024 Scholar Flame</span>
-    </div>
-</footer>
 {% endblock %}
