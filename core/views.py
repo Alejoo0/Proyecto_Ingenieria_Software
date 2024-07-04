@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from .models import FailedLoginAttempt
+from dal import autocomplete
+from .models import Estudiante, Asignatura
 
 def home(request):
     return render (request, 'core/home.html')
@@ -64,3 +66,5 @@ def login_view(request):
     else:
         form = LoginForm()
     return render(request, 'registration/login.html', {'form': form, 'intentos': intentos, 'cuenta_bloqueada':cuenta_bloqueada})
+
+

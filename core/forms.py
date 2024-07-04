@@ -2,7 +2,8 @@ import re
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-from .models import UsuarioDetalles, NIVELES_CHOICES
+from .models import UsuarioDetalles, NIVELES_CHOICES, Profesor, Estudiante, Nota
+from dal import autocomplete
 
 User = get_user_model()
 
