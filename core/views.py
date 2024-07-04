@@ -17,7 +17,7 @@ def registro(request):
     return render(request, 'registration/registro.html', {'form': form})
 
 @login_required
-def user_home(request):
+def home(request):
     try:
         usuario_detalles = request.user.usuariodetalles
         nivel_educacional = usuario_detalles.nivel_educacional
@@ -28,24 +28,7 @@ def user_home(request):
                 segundo_valor_nivel = tupla[1]
                 break
     except UsuarioDetalles.DoesNotExist:
-        segundo_valor_nivel = "Funcionario"
+        segundo_valor_nivel = "No especificado"
     
     return render(request, 'core/home.html', {'nivel_educacional': segundo_valor_nivel})
 
-@login_required
-def bandeja_entrada(request):
-    mensajes_recibidos = Mensaje.objects.filter(destinatario=request.user)
-    return render(request, 'core/bandeja_entrada.html', {'mensajes': mensajes_recibidos})
-
-@login_required
-def enviar_mensaje(request):
-    if request.method == 'POST':
-        form = MensajeForm(request.POST, user=request.user)
-        if form.is_valid():
-            mensaje = form.save(commit=False)
-            mensaje.remitente = request.user
-            mensaje.save()
-            return redirect('mensajes')
-    else:
-        form = MensajeForm(user=request.user)
-    return render(request, 'core/enviar_mensaje.html', {'form': form})
