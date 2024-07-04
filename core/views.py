@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max, Q
 from django.contrib import messages
-from django.http import JsonResponse
 from .forms import *
 from .models import *
 
@@ -122,6 +121,17 @@ def crear_conversacion(request):
         form = NuevaConversacionForm(request.POST, usuario_actual=request.user)
         if form.is_valid():
             destinatario = form.cleaned_data['destinatario']
+
+            # Verificar si ya existe una conversación con este destinatario
+            conversacion_existente = Mensaje.objects.filter(
+                (Q(remitente=request.user) & Q(destinatario=destinatario)) |
+                (Q(remitente=destinatario) & Q(destinatario=request.user))
+            ).exists()
+
+            if conversacion_existente:
+                messages.error(request, 'Ya existe una conversación con este usuario.')
+                return redirect('bandeja_entrada')
+
             # Crear el primer mensaje vacío para inicializar la conversación
             Mensaje.objects.create(
                 remitente=request.user,
@@ -132,10 +142,7 @@ def crear_conversacion(request):
     else:
         form = NuevaConversacionForm(usuario_actual=request.user)
     
-    context = {
-        'form_nueva_conversacion': form,
-    }
-    return render(request, 'core/bandeja_entrada.html', context)
+    return redirect('bandeja_entrada')
 
 @login_required
 def enviar_mensaje(request, usuario_id):

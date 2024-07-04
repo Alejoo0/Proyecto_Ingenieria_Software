@@ -13,7 +13,7 @@
         <ul>
             {% if conversaciones %}
                 {% for conversacion in conversaciones %}
-                <li class="d-flex justify-content-between align-items-center">
+                <li class="d-flex justify-content-between align-items-center my-2">
                     <a class='text-decoration-none text-reset fw-bold' href="{% url 'bandeja_entrada' %}?usuario_id={{ conversacion.usuario.id }}">
                         {{ conversacion.usuario.first_name }} {{ conversacion.usuario.last_name }}
                     </a>
