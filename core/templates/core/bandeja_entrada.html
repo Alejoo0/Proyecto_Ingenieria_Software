@@ -4,7 +4,7 @@
 {% block content %}
 <nav class="navbar navbar-expand-lg custom-navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="{% url 'home' %}">
             <img src="{% static 'core/img/logo_SCHOLAR_FLAME.jpg' %}" id="Logo" alt="Logo" class="logo">
         </a>
         
@@ -14,77 +14,71 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Inicio</a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Inicio</a>
                 </li>
-
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Noticias</a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'noticias' %}active{% endif %}" href="#">Noticias</a>
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'bandeja_entrada' %}">Mensajes</a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'mensajes' %}active{% endif %}" href="{% url 'bandeja_entrada' %}">Mensajes</a>
                 </li>
                 {% endif %}
             </ul>
             
-            <ul class="navbar-nav">
-                
+            <ul class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
-
                 <li class="nav-item">
-                    <a class="nav-link" href="#"> Nivel Educacional {{ nivel_educacional }} </a>
+                    <span class="nav-link">Educación {{ nivel_educacional }}</span>
                 </li>
-                
                 <li class="nav-item">
-                    <a class="nav-link" href="#"> ¡Hola!  {{ user.username }} </a>
+                    <span class="nav-link">¡Hola, {{ user.username }}!</span>
                 </li>
-
                 <li class="nav-item">
-
                     <form method="POST" action="{% url 'logout' %}">
                         {% csrf_token %}
-                        <button type="submit" class="nav-link btn btn-link">Cerrar sesión</button>
+                        <button type="submit" class="nav-link btn btn-link text-decoration-none">Cerrar sesión</button>
                     </form>
-
                 </li>
-
                 {% else %}
-                
                 <li class="nav-item">
-                    <a class="nav-link" href=" {% url 'login' %} ">Iniciar sesión</a>
+                    <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
                 </li>
-
                 <li class="nav-item">
-                    <a class="nav-link" href=" {% url 'registro' %} ">Registrate</a>
+                    <a class="nav-link" href="{% url 'registro' %}">Regístrate</a>
                 </li>
-
                 {% endif %}
             </ul>
         </div>
     </div>
 </nav>
 
-<div class="container">
+<div class="container mt-4 mb-5">
     <div class="row justify-content-center">
-        <h2>Bandeja de Entrada</h2>
-        <ul>
-            {% for mensaje in mensajes %}
-            <li>
-                <strong>De:</strong> {{ mensaje.remitente.username }}<br>
-                <strong>Fecha:</strong> {{ mensaje.fecha_envio }}<br>
-                <strong>Mensaje:</strong> {{ mensaje.contenido }}
-            </li>
-            {% endfor %}
-        </ul>
-        <a href="{% url 'enviar_mensaje' %}">Enviar Mensaje</a>
+        <div class="col-lg-6">
+            <h2 class="text-center mb-4">Mensajes</h2>
+            <div class="text-end mb-3">
+                <a class="btn btn-secondary" href="{% url 'enviar_mensaje' %}">Enviar Mensaje</a>
+            </div>
+            <ul class="list-group">
+                {% for mensaje in mensajes %}
+                <li class="list-group-item">
+                    <h5 class="mb-1">{{ mensaje.remitente.username }}</h5>
+                    <p class="mb-1">{{ mensaje.contenido }}</p>
+                    <p class="fs-6 text-body-secondary text-end">{{ mensaje.fecha_envio|date:"d/m/Y H:i" }}</p>
+                </li> 
+                {% empty %}
+                <li class="list-group-item text-center">No tienes mensajes.</li>
+                {% endfor %}
+            </ul> 
+        </div>
     </div>
 </div>
 
 <footer class="footer mt-auto py-3 custom-footer">
-    <div class="container">
-        <span class="">&copy; Scholar Flame</span>
+    <div class="container text-center">
+        <span>&copy; 2024 Scholar Flame</span>
     </div>
 </footer>
 {% endblock %}

@@ -34,7 +34,7 @@
                 {% if user.is_authenticated %}
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#"> Nivel Educacional {{ nivel_educacional }} </a>
+                    <a class="nav-link" href="#"> Educación {{ nivel_educacional }} </a>
                 </li>
                 
                 <li class="nav-item">
@@ -42,22 +42,20 @@
                 </li>
 
                 <li class="nav-item">
-
                     <form method="POST" action="{% url 'logout' %}">
                         {% csrf_token %}
                         <button type="submit" class="nav-link btn btn-link">Cerrar sesión</button>
                     </form>
-
                 </li>
 
                 {% else %}
                 
                 <li class="nav-item">
-                    <a class="nav-link" href=" {% url 'login' %} ">Iniciar sesión</a>
+                    <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href=" {% url 'registro' %} ">Registrate</a>
+                    <a class="nav-link" href="{% url 'registro' %}">Registrate</a>
                 </li>
 
                 {% endif %}
@@ -66,21 +64,51 @@
     </div>
 </nav>
 
-<div class="container">
+<div class="container mt-4 mb-5">
     <div class="row justify-content-center">
-        <h2>Enviar Mensaje</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Enviar</button>
-        </form>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Enviar Mensaje</h5>
+                </div>
+                <div class="card-body text-center">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_destinatario" class="form-label">Destinatario:</label>
+                            {{ form.destinatario }}
+                            {% if form.destinatario.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.destinatario.errors %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_contenido" class="form-label">Contenido:</label> <br>
+                            {{ form.contenido }}
+                            {% if form.contenido.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.contenido.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-success">Enviar</button>
+                    </form>
+                </div>                
+            </div>
+        </div>
     </div>
 </div>
 
-
 <footer class="footer mt-auto py-3 custom-footer">
     <div class="container">
-        <span class="text-muted">&copy; Scholar Flame</span>
+        <span>&copy; Scholar Flame</span>
     </div>
 </footer>
 {% endblock %}
