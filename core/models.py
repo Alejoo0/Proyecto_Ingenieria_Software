@@ -17,3 +17,12 @@ class UsuarioDetalles(models.Model):
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
 
+class Mensaje(models.Model):
+    remitente = models.ForeignKey(User, related_name='mensajes_enviados', on_delete=models.CASCADE)
+    destinatario = models.ForeignKey(User, related_name='mensajes_recibidos', on_delete=models.CASCADE)
+    contenido = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    leido = models.BooleanField(default=False)  # Campo para indicar si el mensaje fue leído
+
+    def __str__(self):
+        return f"De: {self.remitente.username}, Para: {self.destinatario.username}, Fecha: {self.timestamp}"

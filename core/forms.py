@@ -63,3 +63,31 @@ class CustomUserCreationForm(UserCreationForm):
         )
         return user
 
+class MensajeForm(forms.ModelForm):
+    class Meta:
+        model = Mensaje
+        fields = ['contenido']
+        widgets = {
+            'contenido': forms.Textarea(attrs={'rows': 3}),
+        }
+
+class NuevaConversacionForm(forms.Form):
+    destinatario = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        empty_label="Seleccione un destinatario",
+        widget=forms.Select(attrs={'class': 'form-control select2'})
+    )
+    
+    def __init__(self, *args, **kwargs):
+        usuario_actual = kwargs.pop('usuario_actual')
+        super(NuevaConversacionForm, self).__init__(*args, **kwargs)
+        
+        if usuario_actual.usuariodetalles.es_estudiante:
+            # Filtrar solo los profesores
+            self.fields['destinatario'].queryset = User.objects.filter(usuariodetalles__es_profesor=True)
+        elif usuario_actual.usuariodetalles.es_profesor:
+            # Filtrar solo los estudiantes
+            self.fields['destinatario'].queryset = User.objects.filter(usuariodetalles__es_estudiante=True)
+        else:
+            # En caso de otro tipo de usuario, mostrar todos
+            self.fields['destinatario'].queryset = User.objects.exclude(id=usuario_actual.id)

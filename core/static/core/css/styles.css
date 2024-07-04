@@ -49,3 +49,15 @@ small{
     border-bottom-width: 2px;
     transition: all 0,3s ease;
 }
+.btn-custom {
+    background-color: #0C252C;
+    color: #ffffff;
+    transition: background-color 0.3s ease;
+    border: none;
+    outline: none;
+}
+
+.btn-custom:hover {
+    background-color: #173b45;
+    color:#fff;
+}

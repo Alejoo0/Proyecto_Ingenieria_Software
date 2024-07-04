@@ -1,0 +1,86 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+<div class="row m-1">
+    <!-- Lado izquierdo para listar conversaciones -->
+    <div class="col-md-3 border">
+        <h3 class="text-center">Mensajes</h3>
+        <div class="d-grid gap-2 my-4">
+            <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#nuevaConversacionModal">
+                Nueva Conversación
+            </button>
+        </div>
+        <ul>
+            {% if conversaciones %}
+                {% for conversacion in conversaciones %}
+                <li class="d-flex justify-content-between align-items-center">
+                    <a class='text-decoration-none text-reset fw-bold' href="{% url 'bandeja_entrada' %}?usuario_id={{ conversacion.usuario.id }}">
+                        {{ conversacion.usuario.first_name }} {{ conversacion.usuario.last_name }}
+                    </a>
+                    <form method="post" action="{% url 'bandeja_entrada' %}?usuario_id={{ conversacion.usuario.id }}" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="accion" value="eliminar_conversacion">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
+                    </form>
+                </li>
+            {% endfor %}
+            {% else %}
+                <p>No tienes conversaciones aún.</p>
+            {% endif %}
+        </ul>
+    </div>
+
+    <!-- Lado derecho para mostrar detalles de la conversación -->
+    <div class="col-md-9 border">
+        {% if conversacion_seleccionada %}
+            <h3>{{ conversacion_seleccionada.usuario.first_name }} {{ conversacion_seleccionada.usuario.last_name }}</h3>
+            <hr>
+            <div id="detalleConversacion">
+                {% for mensaje in conversacion_seleccionada.mensajes %}
+                    <div class="{% if mensaje.remitente == user %}text-end{% else %}text-start{% endif %}">
+                        <p><strong>{{ mensaje.remitente.first_name }}:</strong> {{ mensaje.contenido }}</p>
+                        <p><small>{{ mensaje.timestamp }}</small></p>
+                    </div>
+                {% endfor %}
+            </div>
+            <form id="formEnviarMensaje" method="POST" action="{% url 'enviar_mensaje' conversacion_seleccionada.usuario.id %}">
+                {% csrf_token %}
+                {{ form_mensaje.as_p }}
+                <button type="submit" class="btn btn-custom">Enviar</button>
+            </form>
+        {% else %}
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <div class="text-center">
+                <p class="text-muted">Selecciona una conversación para ver los detalles.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal para crear nueva conversación -->
+<div class="modal fade" id="nuevaConversacionModal" tabindex="-1" aria-labelledby="nuevaConversacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="nuevaConversacionModalLabel">Nueva Conversación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulario para crear nueva conversación -->
+                <form method="POST" action="{% url 'crear_conversacion' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form_nueva_conversacion.destinatario }}
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-custom">Crear conversación</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
