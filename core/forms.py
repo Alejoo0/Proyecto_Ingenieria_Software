@@ -66,22 +66,20 @@ class CustomUserCreationForm(UserCreationForm):
 class MensajeForm(forms.ModelForm):
     destinatario = forms.ModelChoiceField(
         queryset=User.objects.all(),
-        label="",  # Oculta la etiqueta
-        empty_label="Seleccione un destinatario",  # Placeholder para Select2
-        widget=forms.Select(attrs={'class': 'form-select'})  # Clase select2 para Select2
+        label="Destinatario"
     )
     contenido = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Ingrese su mensaje aquí...'}))
-
+    
     class Meta:
         model = Mensaje
         fields = ['destinatario', 'contenido']
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
+        user = kwargs.pop('user', None)  # Pop 'user' from kwargs
         super().__init__(*args, **kwargs)
+        if user:
+            self.fields['destinatario'].queryset = User.objects.exclude(id=user.id)
 
     def clean_destinatario(self):
         destinatario = self.cleaned_data.get('destinatario')
-        if destinatario == self.user:
-            raise forms.ValidationError("No puedes enviarte un mensaje a ti mismo.")
         return destinatario
