@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.utils.timezone import localtime
 from django.db.models import Max, Q
 from django.contrib import messages
+from django.urls import reverse
 from .forms import *
 from .models import *
 
@@ -47,10 +49,28 @@ def bandeja_entrada(request):
                 break
     except UsuarioDetalles.DoesNotExist:
         segundo_valor_nivel = "No especificado"
+
     if request.method == 'POST':
         if 'accion' in request.POST and request.POST['accion'] == 'eliminar_conversacion':
-            usuario_id = request.GET.get('usuario_id')
-            usuario_destinatario = get_object_or_404(User, id=usuario_id)
+            usuario_id = request.POST.get('usuario_id')
+            
+            # Verificar si el usuario_id es válido y no está vacío
+            if usuario_id is None:
+                messages.error(request, 'No se proporcionó un ID de usuario válido.')
+                return redirect('bandeja_entrada')
+
+            try:
+                usuario_id = int(usuario_id)
+            except ValueError:
+                messages.error(request, 'El ID de usuario proporcionado no es válido.')
+                return redirect('bandeja_entrada')
+
+            try:
+                usuario_destinatario = User.objects.get(id=usuario_id)
+            except User.DoesNotExist:
+                messages.error(request, 'El usuario destinatario no existe.')
+                return redirect('bandeja_entrada')
+
             conversacion = Mensaje.objects.filter(
                 (Q(remitente=request.user) & Q(destinatario=usuario_destinatario)) |
                 (Q(remitente=usuario_destinatario) & Q(destinatario=request.user))
@@ -58,6 +78,20 @@ def bandeja_entrada(request):
             conversacion.delete()
             messages.success(request, 'Conversación eliminada correctamente.')
             return redirect('bandeja_entrada')
+
+        elif request.POST['accion'] == 'enviar_mensaje':
+            usuario_id = request.POST.get('usuario_id')
+            usuario_destinatario = get_object_or_404(User, id=usuario_id)
+            form_mensaje = MensajeForm(request.POST)
+            if form_mensaje.is_valid():
+                nuevo_mensaje = form_mensaje.save(commit=False)
+                nuevo_mensaje.remitente = request.user
+                nuevo_mensaje.destinatario = usuario_destinatario
+                nuevo_mensaje.save()
+                if usuario_id:
+                    return redirect(reverse('bandeja_entrada') + f'?usuario_id={usuario_id}')
+                else:
+                    return redirect('bandeja_entrada')
 
     usuario = request.user
     form_nueva_conversacion = NuevaConversacionForm(usuario_actual=usuario)
@@ -74,7 +108,8 @@ def bandeja_entrada(request):
             'usuario': User.objects.get(id=remitente['remitente']),
             'ultimo_mensaje': ultimo_mensaje.contenido if ultimo_mensaje else '',
             'timestamp': remitente['ultima_fecha'],
-            'leido': ultimo_mensaje.leido if ultimo_mensaje else False
+            'leido': ultimo_mensaje.leido if ultimo_mensaje else False,
+            'es_remitente': False  # Marcar como False para los mensajes recibidos
         }
 
     for destinatario in destinatarios_enviados:
@@ -83,11 +118,12 @@ def bandeja_entrada(request):
             'usuario': User.objects.get(id=destinatario['destinatario']),
             'ultimo_mensaje': ultimo_mensaje.contenido if ultimo_mensaje else '',
             'timestamp': destinatario['ultima_fecha'],
-            'leido': ultimo_mensaje.leido if ultimo_mensaje else False
+            'leido': ultimo_mensaje.leido if ultimo_mensaje else False,
+            'es_remitente': True  # Marcar como True para los mensajes enviados
         }
 
     conversacion_seleccionada = None
-    mensajes = None
+    mensajes_agrupados = None
     form_mensaje = None
 
     if 'usuario_id' in request.GET:
@@ -96,14 +132,25 @@ def bandeja_entrada(request):
             (Q(remitente=usuario) & Q(destinatario=usuario_otro)) |
             (Q(remitente=usuario_otro) & Q(destinatario=usuario))
         ).order_by('timestamp')
+
         form_mensaje = MensajeForm()
 
         # Marcar mensajes como leídos cuando se ve la conversación
         mensajes.filter(destinatario=usuario, leido=False).update(leido=True)
 
+        mensajes_agrupados = {}
+        for mensaje in mensajes:
+            fecha_local = localtime(mensaje.timestamp).date()
+            if fecha_local not in mensajes_agrupados:
+                mensajes_agrupados[fecha_local] = []
+            mensajes_agrupados[fecha_local].append({
+                'mensaje': mensaje,
+                'es_remitente': mensaje.remitente == request.user  # Marcar si el mensaje es del remitente
+            })
+
         conversacion_seleccionada = {
             'usuario': usuario_otro,
-            'mensajes': mensajes,
+            'mensajes_agrupados': mensajes_agrupados,
             'form_mensaje': form_mensaje
         }
 
@@ -130,15 +177,16 @@ def crear_conversacion(request):
 
             if conversacion_existente:
                 messages.error(request, 'Ya existe una conversación con este usuario.')
-                return redirect('bandeja_entrada')
+            else:
+                # Crear el primer mensaje solo si no hay conversación existente
+                nueva_conversacion = Mensaje.objects.create(
+                    remitente=request.user,
+                    destinatario=destinatario,
+                )
+                messages.success(request, 'Conversación iniciada correctamente.')
+                # Redirigir a la conversación recién creada
+                return redirect(reverse('bandeja_entrada') + f'?usuario_id={destinatario.id}')
 
-            # Crear el primer mensaje vacío para inicializar la conversación
-            Mensaje.objects.create(
-                remitente=request.user,
-                destinatario=destinatario,
-                contenido=""
-            )
-            return redirect('bandeja_entrada')
     else:
         form = NuevaConversacionForm(usuario_actual=request.user)
     

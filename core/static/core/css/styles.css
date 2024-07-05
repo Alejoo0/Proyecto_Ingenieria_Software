@@ -1,13 +1,36 @@
-*{
-    margin:0;
-    padding:0;
+* {
+    margin: 0;
+    padding: 0;
 }
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+.wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.content {
+    flex: 1;
+    /* Otros estilos de tu contenido */
+}
+.footer {
+    background-color: #0C252C;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+}
+
 .logo {
     max-width: 10vh;
     height: auto;
 }
 
-.custom-navbar{
+.custom-navbar {
     background-color: #0C252C;
 }
 
@@ -18,28 +41,29 @@
     text-align: center;
 }
 
-.carousel{
+.carousel {
     margin-top: 2vh;
     margin-bottom: 2vh;
 }
 
-html, body {
+html,
+body {
     height: 100%;
 }
 
-small{
+small {
     display: none;
 }
 
-#fondo{
+#fondo {
     background: linear-gradient(120deg, #e85c04, #9a031e);
 }
 
-.card-img-top{
+.card-img-top {
     max-width: 14vh;
 }
 
-.form-login input{
+.form-login input {
     height: 40px;
     width: 100%;
     outline: none;
@@ -47,8 +71,9 @@ small{
     border: 1px solid #e85c04;
     padding-left: 15px;
     border-bottom-width: 2px;
-    transition: all 0,3s ease;
+    transition: all 0.3s ease;
 }
+
 .btn-custom {
     background-color: #0C252C;
     color: #ffffff;
@@ -59,7 +84,7 @@ small{
 
 .btn-custom:hover {
     background-color: #173b45;
-    color:#fff;
+    color: #fff;
 }
 
 .messages-container {
@@ -74,4 +99,60 @@ small{
     background-color: #f8d7da;
     color: #721c24;
     border-color: #f5c6cb;
+}
+
+/* Estilos para mensajes del remitente */
+.remite {
+    background-color: #835725;
+    color: #fff;
+    padding: 5px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    float: right; /* Alinea a la derecha */
+    clear: both; /* Evita que otros elementos floten al lado */
+}
+
+/* Estilos para mensajes del destinatario */
+.destino {
+    background-color: #153f4b;
+    color: #fff;
+    padding: 5px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    float: left; /* Alinea a la izquierda */
+    clear: both; /* Evita que otros elementos floten al lado */
+}
+
+.fecha {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.mensaje {
+    margin-bottom: 15px;
+}
+
+.mensaje p {
+    margin: 0;
+}
+
+.mensaje .fw-lighter {
+    font-size: 12px;
+}
+
+.vh-100 {
+    min-height: 74vh;
+    max-height: 74vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.text-no-conv {
+    max-width: 100%;
+    margin: auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }

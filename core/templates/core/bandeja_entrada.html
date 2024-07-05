@@ -1,9 +1,9 @@
 {% extends 'core/base.html' %}
 {% load static %}
 {% block content %}
-<div class="row m-1">
+<div class="row mx-1">
     <!-- Lado izquierdo para listar conversaciones -->
-    <div class="col-md-3 border">
+    <div class="col-md-3 border-end py-2">
         <h3 class="text-center">Mensajes</h3>
         <div class="d-grid gap-2 my-4">
             <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#nuevaConversacionModal">
@@ -17,12 +17,13 @@
                     <a class='text-decoration-none text-reset fw-bold' href="{% url 'bandeja_entrada' %}?usuario_id={{ conversacion.usuario.id }}">
                         {{ conversacion.usuario.first_name }} {{ conversacion.usuario.last_name }}
                     </a>
-                    <form method="post" action="{% url 'bandeja_entrada' %}?usuario_id={{ conversacion.usuario.id }}" class="d-inline">
+                    <form method="post" action="{% url 'bandeja_entrada' %}" class="d-inline">
                         {% csrf_token %}
                         <input type="hidden" name="accion" value="eliminar_conversacion">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-trash3-fill"></i>
-                            </button>
+                        <input type="hidden" name="usuario_id" value="{{ conversacion.usuario.id }}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash3-fill"></i>
+                        </button>
                     </form>
                 </li>
             {% endfor %}
@@ -33,26 +34,46 @@
     </div>
 
     <!-- Lado derecho para mostrar detalles de la conversación -->
-    <div class="col-md-9 border">
+    <div class="col-md-9 border-start py-2 ">
         {% if conversacion_seleccionada %}
             <h3>{{ conversacion_seleccionada.usuario.first_name }} {{ conversacion_seleccionada.usuario.last_name }}</h3>
             <hr>
-            <div id="detalleConversacion">
-                {% for mensaje in conversacion_seleccionada.mensajes %}
-                    <div class="{% if mensaje.remitente == user %}text-end{% else %}text-start{% endif %}">
-                        <p><strong>{{ mensaje.remitente.first_name }}:</strong> {{ mensaje.contenido }}</p>
-                        <p><small>{{ mensaje.timestamp }}</small></p>
-                    </div>
+            <div class="mensajes mb-1">
+                {% for fecha, mensajes in conversacion_seleccionada.mensajes_agrupados.items %}
+                    {% with primer_mensaje=mensajes.first.mensaje %}
+                        {% if forloop.first or fecha != primer_mensaje.timestamp|date:"Y-m-d" %}
+                            <div class="fecha text-muted text-center">
+                                {{ fecha }}
+                            </div>
+                        {% endif %}
+                        {% for mensaje_info in mensajes %}
+                            {% with mensaje=mensaje_info.mensaje es_remitente=mensaje_info.es_remitente %}
+                                <div class="mensaje {% if es_remitente %}remite{% else %}destino{% endif %}">
+                                    <div class="d-flex justify-content-between">
+                                        <p class="me-2">{{ mensaje.contenido }}</p>
+                                        <div class="text-end fw-lighter align-self-end">
+                                            <p>{{ mensaje.timestamp|time:"H:i" }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endwith %}
+                        {% endfor %}
+                    {% endwith %}
                 {% endfor %}
-            </div>
-            <form id="formEnviarMensaje" method="POST" action="{% url 'enviar_mensaje' conversacion_seleccionada.usuario.id %}">
+            </div>                                                                      
+            <form id="formEnviarMensaje" method="POST" action="">
                 {% csrf_token %}
-                {{ form_mensaje.as_p }}
-                <button type="submit" class="btn btn-custom">Enviar</button>
-            </form>
+                <input type="hidden" name="accion" value="enviar_mensaje">
+                <input type="hidden" name="usuario_id" value="{{ conversacion_seleccionada.usuario.id }}">
+                
+                <div class="text-end my-1">
+                    {{ conversacion_seleccionada.form_mensaje }}
+                    <button type="submit" class="btn btn-custom my-1">Enviar</button>
+                </div>
+            </form>                      
         {% else %}
-        <div class="d-flex justify-content-center align-items-center vh-100">
-            <div class="text-center">
+        <div class="vh-100">
+            <div class="text-no-conv">
                 <p class="text-muted">Selecciona una conversación para ver los detalles.</p>
             </div>
         </div>

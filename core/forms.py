@@ -68,7 +68,15 @@ class MensajeForm(forms.ModelForm):
         model = Mensaje
         fields = ['contenido']
         widgets = {
-            'contenido': forms.Textarea(attrs={'rows': 3}),
+            'contenido': forms.Textarea(attrs={
+                'rows': 1,
+                'placeholder': 'Escribe tu mensaje aquí...',
+                'class': 'form-control rounded-pill w-100',
+                'style': 'resize: none;'
+            }),
+        }
+        labels = {
+            'contenido': ''
         }
 
 class NuevaConversacionForm(forms.Form):
