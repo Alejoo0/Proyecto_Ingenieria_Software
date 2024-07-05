@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from .models import FailedLoginAttempt
 from dal import autocomplete
-from .models import Estudiante, Asignatura
+from .models import Estudiante, Asignatura, Comunicado
 
 def home(request):
     return render (request, 'core/home.html')
@@ -67,4 +67,8 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'registration/login.html', {'form': form, 'intentos': intentos, 'cuenta_bloqueada':cuenta_bloqueada})
 
-
+def comunicados(request):
+    comunicados = Comunicado.objects.all()
+    #comunicados = comunicados.order_by('-fecha_publicacion')
+    data = {"comunicados":comunicados}
+    return render(request, 'core/comunicadosAlumnos.html', data)
