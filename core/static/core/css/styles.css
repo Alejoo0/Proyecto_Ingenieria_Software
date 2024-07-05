@@ -7,17 +7,6 @@
     height: auto;
 }
 
-.custom-navbar{
-    background-color: #0C252C;
-}
-
-.custom-footer {
-    background-color: #0C252C;
-    color: #fff !important;
-    padding: 20px;
-    text-align: center;
-}
-
 .carousel{
     margin-top: 2vh;
     margin-bottom: 2vh;
@@ -33,6 +22,10 @@ small{
 
 #fondo{
     background: linear-gradient(120deg, #e85c04, #9a031e);
+}
+
+.fondo {
+    height: 80vh;
 }
 
 .card-img-top{

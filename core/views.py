@@ -20,15 +20,6 @@ def cursos(request):
     except Estudiante.DoesNotExist:
         return redirect('home')
 
-def cursos(request):
-    try:
-        estudiante = Estudiante.objects.get(user=request.user)
-        cursos = estudiante.cursos_inscritos.all()
-        return render(request, 'core/cursos.html', {'cursos': cursos})
-    except Estudiante.DoesNotExist:
-        return redirect('home')
-
-
 
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'registration/password_reset_form.html'
