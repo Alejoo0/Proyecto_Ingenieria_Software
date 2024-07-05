@@ -1,83 +1,86 @@
 {% extends 'core/base.html' %}
 {% load static %}
 {% block content %}
-<div class="row mx-1">
-    <!-- Lado izquierdo para listar conversaciones -->
-    <div class="col-md-3 border-end py-2">
-        <h3 class="text-center">Mensajes</h3>
-        <div class="d-grid gap-2 my-4">
-            <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#nuevaConversacionModal">
-                Nueva Conversación
-            </button>
+<div class="container-fluid vh-100 vw-100 d-flex flex-column p-0 mb-auto mt-3">
+    <div class="row flex-grow-1 w-100 m-0">
+        <!-- Lado izquierdo para listar conversaciones -->
+        <div class="col-md-3 border-end py-2 h-100 overflow-auto">
+            <h3 class="text-center">Mensajes</h3>
+            <div class="d-grid gap-2 my-4">
+                <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#nuevaConversacionModal">
+                    Nueva Conversación
+                </button>
+            </div>
+            <ul>
+                {% if conversaciones %}
+                    {% for conversacion in conversaciones %}
+                    <li class="d-flex justify-content-between align-items-center my-2">
+                        <a class='text-decoration-none text-reset fw-bold' href="{% url 'bandeja_entrada' %}?usuario_id={{ conversacion.usuario.id }}">
+                            {{ conversacion.usuario.first_name }} {{ conversacion.usuario.last_name }}
+                        </a>
+                        <form method="post" action="{% url 'bandeja_entrada' %}" class="d-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="accion" value="eliminar_conversacion">
+                            <input type="hidden" name="usuario_id" value="{{ conversacion.usuario.id }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
+                        </form>
+                    </li>
+                {% endfor %}
+                {% else %}
+                    <p>No tienes conversaciones aún.</p>
+                {% endif %}
+            </ul>
         </div>
-        <ul>
-            {% if conversaciones %}
-                {% for conversacion in conversaciones %}
-                <li class="d-flex justify-content-between align-items-center my-2">
-                    <a class='text-decoration-none text-reset fw-bold' href="{% url 'bandeja_entrada' %}?usuario_id={{ conversacion.usuario.id }}">
-                        {{ conversacion.usuario.first_name }} {{ conversacion.usuario.last_name }}
-                    </a>
-                    <form method="post" action="{% url 'bandeja_entrada' %}" class="d-inline">
-                        {% csrf_token %}
-                        <input type="hidden" name="accion" value="eliminar_conversacion">
-                        <input type="hidden" name="usuario_id" value="{{ conversacion.usuario.id }}">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                            <i class="bi bi-trash3-fill"></i>
-                        </button>
-                    </form>
-                </li>
-            {% endfor %}
-            {% else %}
-                <p>No tienes conversaciones aún.</p>
-            {% endif %}
-        </ul>
-    </div>
 
-    <!-- Lado derecho para mostrar detalles de la conversación -->
-    <div class="col-md-9 border-start py-2 ">
-        {% if conversacion_seleccionada %}
-            <h3>{{ conversacion_seleccionada.usuario.first_name }} {{ conversacion_seleccionada.usuario.last_name }}</h3>
-            <hr>
-            <div class="mensajes mb-1">
-                {% for fecha, mensajes in conversacion_seleccionada.mensajes_agrupados.items %}
-                    {% with primer_mensaje=mensajes.first.mensaje %}
-                        {% if forloop.first or fecha != primer_mensaje.timestamp|date:"Y-m-d" %}
-                            <div class="fecha text-muted text-center">
-                                {{ fecha }}
-                            </div>
-                        {% endif %}
-                        {% for mensaje_info in mensajes %}
-                            {% with mensaje=mensaje_info.mensaje es_remitente=mensaje_info.es_remitente %}
-                                <div class="mensaje {% if es_remitente %}remite{% else %}destino{% endif %}">
-                                    <div class="d-flex justify-content-between">
-                                        <p class="me-2">{{ mensaje.contenido }}</p>
-                                        <div class="text-end fw-lighter align-self-end">
-                                            <p>{{ mensaje.timestamp|time:"H:i" }}</p>
-                                        </div>
+        <!-- Lado derecho para mostrar detalles de la conversación -->
+        <div class="col-md-9 border-start py-2 h-100 d-flex flex-column">
+            {% if conversacion_seleccionada %}
+                <h3>{{ conversacion_seleccionada.usuario.first_name }} {{ conversacion_seleccionada.usuario.last_name }}</h3>
+                <hr>
+                <div class="flex-grow-1 overflow-auto mensajes-container">
+                    <div class="mensajes mb-1">
+                        {% for fecha, mensajes in conversacion_seleccionada.mensajes_agrupados.items %}
+                            {% with primer_mensaje=mensajes.first.mensaje %}
+                                {% if forloop.first or fecha != primer_mensaje.timestamp|date:"Y-m-d" %}
+                                    <div class="fecha text-muted text-center">
+                                        {{ fecha }}
                                     </div>
-                                </div>
+                                {% endif %}
+                                {% for mensaje_info in mensajes %}
+                                    {% with mensaje=mensaje_info.mensaje es_remitente=mensaje_info.es_remitente %}
+                                        <div class="mensaje {% if es_remitente %}remite{% else %}destino{% endif %}">
+                                            <div class="d-flex justify-content-between">
+                                                <p class="me-2">{{ mensaje.contenido }}</p>
+                                                <div class="text-end fw-lighter align-self-end">
+                                                    <p>{{ mensaje.timestamp|time:"H:i" }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endwith %}
+                                {% endfor %}
                             {% endwith %}
                         {% endfor %}
-                    {% endwith %}
-                {% endfor %}
-            </div>                                                                      
-            <form id="formEnviarMensaje" method="POST" action="">
-                {% csrf_token %}
-                <input type="hidden" name="accion" value="enviar_mensaje">
-                <input type="hidden" name="usuario_id" value="{{ conversacion_seleccionada.usuario.id }}">
-                
-                <div class="text-end my-1">
-                    {{ conversacion_seleccionada.form_mensaje }}
-                    <button type="submit" class="btn btn-custom my-1">Enviar</button>
+                    </div>
                 </div>
-            </form>                      
-        {% else %}
-        <div class="vh-100">
-            <div class="text-no-conv">
-                <p class="text-muted">Selecciona una conversación para ver los detalles.</p>
-            </div>
+                <form id="formEnviarMensaje" method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="accion" value="enviar_mensaje">
+                    <input type="hidden" name="usuario_id" value="{{ conversacion_seleccionada.usuario.id }}">
+                    <div class="text-end my-1">
+                        {{ conversacion_seleccionada.form_mensaje }}
+                        <button type="submit" class="btn btn-custom my-1">Enviar</button>
+                    </div>
+                </form>
+            {% else %}
+                <div class="d-flex justify-content-center align-items-center flex-grow-1">
+                    <div class="text-center">
+                        <p class="text-muted">Selecciona una conversación para ver los detalles.</p>
+                    </div>
+                </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 </div>
 
@@ -104,4 +107,33 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const formEnviarMensaje = document.getElementById('formEnviarMensaje');
+        const textAreaMensaje = formEnviarMensaje.querySelector('textarea');
+    
+        textAreaMensaje.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                formEnviarMensaje.submit();
+            }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const mensajesContainer = document.querySelector(".mensajes-container");
+        const mensajes = mensajesContainer.querySelectorAll(".mensaje");
+
+        let startY;
+        let scrollY;
+        let scrollAmount;
+
+        mensajesContainer.addEventListener("wheel", function(event) {
+            startY = event.pageY;
+            scrollY = 0;
+            scrollAmount = 0;
+        });
+    });
+    </script>
 {% endblock %}
