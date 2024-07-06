@@ -4,7 +4,7 @@
 <div class="container-fluid vh-100 vw-100 d-flex flex-column p-0 mb-auto mt-3">
     <div class="row flex-grow-1 w-100 m-0">
         <!-- Lado izquierdo para listar conversaciones -->
-        <div class="col-md-3 border-end py-2 h-100 overflow-auto">
+        <div class="col-md-3 border-end h-100 overflow-auto">
             <h3 class="text-center">Mensajes</h3>
             <div class="d-grid gap-2 my-4">
                 <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#nuevaConversacionModal">
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Lado derecho para mostrar detalles de la conversación -->
-        <div class="col-md-9 border-start py-2 h-100 d-flex flex-column">
+        <div class="col-md-9 border-start h-100 d-flex flex-column">
             {% if conversacion_seleccionada %}
                 <h3>{{ conversacion_seleccionada.usuario.first_name }} {{ conversacion_seleccionada.usuario.last_name }}</h3>
                 <hr>
@@ -70,7 +70,7 @@
                     {% csrf_token %}
                     <input type="hidden" name="accion" value="enviar_mensaje">
                     <input type="hidden" name="usuario_id" value="{{ conversacion_seleccionada.usuario.id }}">
-                    <div class="d-flex justify-content-between align-items-center my-1" style="width: 100%;">
+                    <div class="d-flex justify-content-between align-items-center mt-2" style="width: 100%;">
                         <div class="w-80" style="width: 90%;">
                             {{ conversacion_seleccionada.form_mensaje }}
                         </div>
