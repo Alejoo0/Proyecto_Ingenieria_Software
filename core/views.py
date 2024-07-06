@@ -4,6 +4,8 @@ from django.utils.timezone import localtime
 from django.http import JsonResponse
 from django.db.models import Max, Q
 from django.contrib import messages
+import pytz
+from django.utils import timezone
 from django.urls import reverse
 from .forms import *
 from .models import *
@@ -39,6 +41,8 @@ def home(request):
 
 @login_required
 def bandeja_entrada(request):
+    zona_horaria = pytz.timezone('America/Santiago')
+    timezone.activate(zona_horaria)
     try:
         usuario_detalles = request.user.usuariodetalles
         nivel_educacional = usuario_detalles.nivel_educacional

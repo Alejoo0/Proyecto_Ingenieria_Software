@@ -15,12 +15,6 @@ html, body {
 }
 .content {
     flex: 1;
-    /* Otros estilos de tu contenido */
-}
-.footer {
-    background-color: #0C252C;
-    color: #fff;
-    text-align: center;
 }
 
 .logo {
@@ -123,6 +117,26 @@ small {
 .fecha {
     font-size: 14px;
     margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.fecha::before {
+    content: attr(data-date);
+    font-weight: bold;
+}
+
+.fecha::after {
+    content: attr(data-time);
+    font-weight: lighter;
+}
+
+.mensaje-group {
+    margin-top: 15px;
+}
+
+.mensaje-group:first-of-type {
+    margin-top: 0;
 }
 
 .mensaje p {
@@ -188,4 +202,5 @@ small {
     padding: 10px;
     margin: 5px 0;
     border-radius: 5px;
+    max-width: 70%;
 }
