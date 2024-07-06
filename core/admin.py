@@ -36,7 +36,7 @@ class AsignaturaAdmin(admin.ModelAdmin):
 
 class ComunicadoAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
-        return False  # No permitir eliminaciones
+        return True  # No permitir eliminaciones
     list_display = ("titulo", "tipo", "asignatura", "fecha_publicacion", "publicado_por")
     list_filter = ("fecha_publicacion",)
 

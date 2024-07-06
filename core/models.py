@@ -43,13 +43,13 @@ class Profesor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Profesor: {self.user.first_name} {self.user.last_name}"
+        return f"{self.user.first_name} {self.user.last_name}"
 
 class Estudiante(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Estudiante: {self.user.first_name} {self.user.last_name}"
+        return f"{self.user.first_name} {self.user.last_name}"
 
 class Asignatura(models.Model):
     nombre = models.CharField(max_length=100)

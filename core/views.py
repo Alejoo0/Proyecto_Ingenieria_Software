@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import CustomUserCreationForm, LoginForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from .models import FailedLoginAttempt
 from dal import autocomplete
-from .models import Estudiante, Asignatura, Comunicado
+from .models import Estudiante, Asignatura, Comunicado, UsuarioDetalles
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     return render (request, 'core/home.html')
@@ -68,7 +69,20 @@ def login_view(request):
     return render(request, 'registration/login.html', {'form': form, 'intentos': intentos, 'cuenta_bloqueada':cuenta_bloqueada})
 
 def comunicados(request):
+    user = request.user
+    estudiante = Estudiante.objects.filter(user=user).first()
     comunicados = Comunicado.objects.all()
-    #comunicados = comunicados.order_by('-fecha_publicacion')
-    data = {"comunicados":comunicados}
+
+    if estudiante:
+        asignaturas_inscritas = estudiante.asignatura_set.all()
+        comunicados = comunicados.filter(asignatura__in=asignaturas_inscritas)
+
+    # Ordenar los comunicados por fecha de publicación
+    comunicados = comunicados.order_by('-fecha_publicacion')
+
+    data = {
+        "comunicados": comunicados,
+    }
+
     return render(request, 'core/comunicadosAlumnos.html', data)
+ 

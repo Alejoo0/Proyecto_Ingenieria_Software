@@ -65,35 +65,37 @@
     </div>
 </nav>
 
-<div>
- 
-    {% for comunicado in comunicados %}
-    <div class="col-lg-4 col-xs-12 p-2" style="align-items: center;">
-        <div class="card h-200 border-light mb-1" style="max-width: 25rem;  background-color: transparent;">
-            {% if comunicado.tipo == "S" %}
-                <div class="card-header" style="color: white; background-color: #008170;">{{ comunicado.titulo }} | Suspensión de actividades</div>
-            
-            {% elif comunicado.tipo == "C" %} 
-                <div class="card-header" style="color: white; background-color: #005B41;">{{ comunicado.titulo }} | Suspensión de clases</div> 
+<div class="row d-xxl-none">
+        {% for comunicado in comunicados %}
+        {% if request.user.username in asignaturas.estudiantes %}
+        {% endif %}
+        <div class="col-lg-4 col-xs-12 p-2" style="align-items: center;">
+            <div class="card h-200 border-light mb-1" style="max-width: 25rem;  background-color: transparent;">
+                {% if comunicado.tipo == "S" %}
+                    <div class="card-header" style="color: white; background-color: #008170;">{{ comunicado.titulo }} | Suspensión de actividades</div>
                 
-            {% else %}    
-                <div class="card-header" style="color: white; background-color: #232D3F;">{{ comunicado.titulo }} | Información</div>
-            {% endif %}
-            <div class="card-body">
-                <h6 class="card-title" style="color: rgb(0, 0, 0); ">{{ comunicado.entidad }}</h6>
-                <h4 class="card-text" style="color: rgb(0, 0, 0);">{{ comunicado.detalle_corto }}</h4>
-                <details style="color: rgb(0, 0, 0); font-size:larger;">
-                    {{ comunicado.detalle }}
-                </details>
-                <p class="card-text" style="color: rgb(0, 0, 0);">Publicado por: <cite title="Source Title">{{ comunicado.publicado_por }}</cite></p>
+                {% elif comunicado.tipo == "C" %} 
+                    <div class="card-header" style="color: white; background-color: #005B41;">{{ comunicado.titulo }} | Suspensión de clases</div> 
+                    
+                {% else %}    
+                    <div class="card-header" style="color: white; background-color: #232D3F;">{{ comunicado.titulo }} | Información</div>
+                {% endif %}
+                <div class="card-body">
+                    <h6 class="card-title" style="color: rgb(0, 0, 0); ">{{ comunicado.entidad }}</h6>
+                    <h4 class="card-text" style="color: rgb(0, 0, 0);">{{ comunicado.detalle_corto }}</h4>
+                    <details style="color: rgb(0, 0, 0); font-size:larger;">
+                        {{ comunicado.detalle }}
+                    </details>
+                    <p class="card-text" style="color: rgb(0, 0, 0);">Publicado por: <cite title="Source Title">{{ comunicado.publicado_por }}</cite></p>
+                    <p class="card-text" style="color: rgb(0, 0, 0);">Asignatura: <cite title="Source Title">{{ comunicado.asignatura }}</cite></p>
+                </div>
             </div>
-        </div>
-    </div>   
-    
-    {% endfor %}
+        </div>   
+        
+        {% endfor %}
 
 </div>
-
+    
 
 
 
