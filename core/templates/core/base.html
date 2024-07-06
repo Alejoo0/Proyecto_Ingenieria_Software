@@ -51,11 +51,15 @@
                         {% if user.is_authenticated %}
         
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Educación {{ nivel_educacional }} </a>
+                            <a class="nav-link" href="#"> ¡Hola!  {{ user.username }} </a>
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#"> ¡Hola!  {{ user.username }} </a>
+                            {% if request.user.usuariodetalles.es_estudiante %}
+                                <a class="nav-link" href="#">Educación {{ nivel_educacional }} </a>
+                            {% else %}
+                                <a class="nav-link" href="#">Profesor</a>
+                            {% endif %}
                         </li>
         
                         <li class="nav-item">

@@ -174,7 +174,6 @@ def crear_conversacion(request):
         if form.is_valid():
             destinatario = form.cleaned_data['destinatario']
 
-            # Verificar si ya existe una conversación con este destinatario
             conversacion_existente = Mensaje.objects.filter(
                 (Q(remitente=request.user) & Q(destinatario=destinatario)) |
                 (Q(remitente=destinatario) & Q(destinatario=request.user))
@@ -183,15 +182,7 @@ def crear_conversacion(request):
             if conversacion_existente:
                 messages.error(request, 'Ya existe una conversación con este usuario.')
             else:
-                # Crear el primer mensaje solo si no hay conversación existente
-                nueva_conversacion = Mensaje.objects.create(
-                    remitente=request.user,
-                    destinatario=destinatario,
-                )
-                messages.success(request, 'Conversación iniciada correctamente.')
-                # Redirigir a la conversación recién creada
                 return redirect(reverse('bandeja_entrada') + f'?usuario_id={destinatario.id}')
-
     else:
         form = NuevaConversacionForm(usuario_actual=request.user)
     
