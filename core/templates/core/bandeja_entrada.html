@@ -1,5 +1,6 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% load humanize %}
 {% block content %}
 <div class="container-fluid vh-100 vw-100 d-flex flex-column p-0 mb-auto mt-3">
     <div class="row flex-grow-1 w-100 m-0">
@@ -11,27 +12,31 @@
                     Nueva Conversación
                 </button>
             </div>
-            <ul>
+            <div class="row">
                 {% if conversaciones %}
+                <div class="conversaciones-container">
                     {% for conversacion in conversaciones %}
-                    <li class="d-flex justify-content-between align-items-center my-2">
-                        <a class='text-decoration-none text-reset fw-bold' href="{% url 'bandeja_entrada' %}?usuario_id={{ conversacion.usuario.id }}">
-                            {{ conversacion.usuario.first_name }} {{ conversacion.usuario.last_name }}
-                        </a>
-                        <form method="post" action="{% url 'bandeja_entrada' %}" class="d-inline">
-                            {% csrf_token %}
-                            <input type="hidden" name="accion" value="eliminar_conversacion">
-                            <input type="hidden" name="usuario_id" value="{{ conversacion.usuario.id }}">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-trash3-fill"></i>
-                            </button>
-                        </form>
-                    </li>
-                {% endfor %}
+                    <a href="{% url 'bandeja_entrada' %}?usuario_id={{ conversacion.usuario.id }}" class="text-decoration-none">
+                        <div class="card mb-1">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ conversacion.usuario.first_name }} {{ conversacion.usuario.last_name }}</h6>
+                                {% with conversacion.mensaje_set.last as ultimo_mensaje %}
+                                    <p class="card-text fs-small">{{ contenido_ultimo_mensaje|truncatechars:30 }}</p>
+                                    <span class="card-text text-muted">{{ hora_ultimo_mensaje|naturaltime }}</span>
+                                {% endwith %}
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
                 {% else %}
-                    <p>No tienes conversaciones aún.</p>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <p>No tienes conversaciones aún.</p>
+                        </div>
+                    </div>
                 {% endif %}
-            </ul>
+            </div>
         </div>
 
         <!-- Lado derecho para mostrar detalles de la conversación -->
