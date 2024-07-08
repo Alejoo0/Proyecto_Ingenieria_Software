@@ -4,6 +4,8 @@ from django.utils.timezone import localtime
 from django.http import JsonResponse
 from django.db.models import Max, Q
 from django.contrib import messages
+import pytz
+from django.utils import timezone
 from django.urls import reverse
 from .forms import *
 from .models import *
@@ -34,11 +36,16 @@ def home(request):
                 break
     except UsuarioDetalles.DoesNotExist:
         segundo_valor_nivel = "No especificado"
+        
+    mensajes_recibidos = Mensaje.objects.filter(destinatario=request.user, leido=False)
+    messages.info(request, f"Tienes {len(mensajes_recibidos)} mensajes nuevos.")
     
     return render(request, 'core/home.html', {'nivel_educacional': segundo_valor_nivel})
 
 @login_required
 def bandeja_entrada(request):
+    zona_horaria = pytz.timezone('America/Santiago')
+    timezone.activate(zona_horaria)
     try:
         usuario_detalles = request.user.usuariodetalles
         nivel_educacional = usuario_detalles.nivel_educacional
@@ -154,12 +161,25 @@ def bandeja_entrada(request):
             'mensajes_agrupados': mensajes_agrupados,
             'form_mensaje': form_mensaje
         }
+    
+    # Obtener el último mensaje de una conversación
+    ultimo_mensaje = Mensaje.objects.filter(destinatario=request.user).order_by('-timestamp').first()
+
+    # Verificar si hay un último mensaje
+    if ultimo_mensaje:
+        contenido_ultimo_mensaje = ultimo_mensaje.contenido
+        hora_ultimo_mensaje = ultimo_mensaje.timestamp
+    else:
+        contenido_ultimo_mensaje = "No hay mensajes en esta conversación."
+        hora_ultimo_mensaje = None
 
     context = {
         'conversaciones': conversaciones.values(),
         'form_nueva_conversacion': form_nueva_conversacion,
         'conversacion_seleccionada': conversacion_seleccionada,
         'nivel_educacional': segundo_valor_nivel,
+        'contenido_ultimo_mensaje': contenido_ultimo_mensaje,
+        'hora_ultimo_mensaje': hora_ultimo_mensaje,
     }
     return render(request, 'core/bandeja_entrada.html', context)
 
@@ -170,7 +190,6 @@ def crear_conversacion(request):
         if form.is_valid():
             destinatario = form.cleaned_data['destinatario']
 
-            # Verificar si ya existe una conversación con este destinatario
             conversacion_existente = Mensaje.objects.filter(
                 (Q(remitente=request.user) & Q(destinatario=destinatario)) |
                 (Q(remitente=destinatario) & Q(destinatario=request.user))
@@ -179,15 +198,7 @@ def crear_conversacion(request):
             if conversacion_existente:
                 messages.error(request, 'Ya existe una conversación con este usuario.')
             else:
-                # Crear el primer mensaje solo si no hay conversación existente
-                nueva_conversacion = Mensaje.objects.create(
-                    remitente=request.user,
-                    destinatario=destinatario,
-                )
-                messages.success(request, 'Conversación iniciada correctamente.')
-                # Redirigir a la conversación recién creada
                 return redirect(reverse('bandeja_entrada') + f'?usuario_id={destinatario.id}')
-
     else:
         form = NuevaConversacionForm(usuario_actual=request.user)
     
@@ -205,3 +216,14 @@ def enviar_mensaje(request, usuario_id):
             mensaje.save()
             return redirect('bandeja_entrada')
     return redirect('bandeja_entrada')
+
+@login_required
+def notificaciones(request):
+    # Obtener los mensajes recibidos
+    mensajes_recibidos = Mensaje.objects.filter(destinatario=request.user, leido=False)
+    
+    context = {
+        'mensajes_recibidos': mensajes_recibidos,
+    }
+
+    return render(request, 'core/notificaciones.html', context)

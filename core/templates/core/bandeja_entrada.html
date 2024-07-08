@@ -1,41 +1,46 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% load humanize %}
 {% block content %}
 <div class="container-fluid vh-100 vw-100 d-flex flex-column p-0 mb-auto mt-3">
     <div class="row flex-grow-1 w-100 m-0">
         <!-- Lado izquierdo para listar conversaciones -->
-        <div class="col-md-3 border-end py-2 h-100 overflow-auto">
+        <div class="col-md-3 border-end h-100 overflow-auto">
             <h3 class="text-center">Mensajes</h3>
             <div class="d-grid gap-2 my-4">
                 <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#nuevaConversacionModal">
                     Nueva Conversación
                 </button>
             </div>
-            <ul>
+            <div class="row">
                 {% if conversaciones %}
+                <div class="conversaciones-container">
                     {% for conversacion in conversaciones %}
-                    <li class="d-flex justify-content-between align-items-center my-2">
-                        <a class='text-decoration-none text-reset fw-bold' href="{% url 'bandeja_entrada' %}?usuario_id={{ conversacion.usuario.id }}">
-                            {{ conversacion.usuario.first_name }} {{ conversacion.usuario.last_name }}
-                        </a>
-                        <form method="post" action="{% url 'bandeja_entrada' %}" class="d-inline">
-                            {% csrf_token %}
-                            <input type="hidden" name="accion" value="eliminar_conversacion">
-                            <input type="hidden" name="usuario_id" value="{{ conversacion.usuario.id }}">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-trash3-fill"></i>
-                            </button>
-                        </form>
-                    </li>
-                {% endfor %}
+                    <a href="{% url 'bandeja_entrada' %}?usuario_id={{ conversacion.usuario.id }}" class="text-decoration-none">
+                        <div class="card mb-1">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ conversacion.usuario.first_name }} {{ conversacion.usuario.last_name }}</h6>
+                                {% with conversacion.mensaje_set.last as ultimo_mensaje %}
+                                    <p class="card-text fs-small">{{ contenido_ultimo_mensaje|truncatechars:30 }}</p>
+                                    <span class="card-text text-muted">{{ hora_ultimo_mensaje|naturaltime }}</span>
+                                {% endwith %}
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
                 {% else %}
-                    <p>No tienes conversaciones aún.</p>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <p>No tienes conversaciones aún.</p>
+                        </div>
+                    </div>
                 {% endif %}
-            </ul>
+            </div>
         </div>
 
         <!-- Lado derecho para mostrar detalles de la conversación -->
-        <div class="col-md-9 border-start py-2 h-100 d-flex flex-column">
+        <div class="col-md-9 border-start h-100 d-flex flex-column">
             {% if conversacion_seleccionada %}
                 <h3>{{ conversacion_seleccionada.usuario.first_name }} {{ conversacion_seleccionada.usuario.last_name }}</h3>
                 <hr>
@@ -48,18 +53,20 @@
                                         {{ fecha }}
                                     </div>
                                 {% endif %}
-                                {% for mensaje_info in mensajes %}
-                                    {% with mensaje=mensaje_info.mensaje es_remitente=mensaje_info.es_remitente %}
-                                        <div class="mensaje {% if es_remitente %}remite{% else %}destino{% endif %}">
-                                            <div class="d-flex justify-content-between">
-                                                <p class="me-2">{{ mensaje.contenido }}</p>
-                                                <div class="text-end fw-lighter align-self-end">
-                                                    <p>{{ mensaje.timestamp|time:"H:i" }}</p>
+                                <div class="mensaje-group">
+                                    {% for mensaje_info in mensajes %}
+                                        {% with mensaje=mensaje_info.mensaje es_remitente=mensaje_info.es_remitente %}
+                                            <div class="mensaje {% if es_remitente %}remite{% else %}destino{% endif %}">
+                                                <div class="d-flex justify-content-between">
+                                                    <p class="me-2">{{ mensaje.contenido }}</p>
+                                                    <div class="text-end fw-lighter align-self-end">
+                                                        <p>{{ mensaje.timestamp|time:"H:i" }}</p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    {% endwith %}
-                                {% endfor %}
+                                        {% endwith %}
+                                    {% endfor %}
+                                </div>
                             {% endwith %}
                         {% endfor %}
                     </div>
@@ -68,9 +75,13 @@
                     {% csrf_token %}
                     <input type="hidden" name="accion" value="enviar_mensaje">
                     <input type="hidden" name="usuario_id" value="{{ conversacion_seleccionada.usuario.id }}">
-                    <div class="text-end my-1">
-                        {{ conversacion_seleccionada.form_mensaje }}
-                        <button type="submit" class="btn btn-custom my-1">Enviar</button>
+                    <div class="d-flex justify-content-between align-items-center mt-2" style="width: 100%;">
+                        <div class="w-80" style="width: 90%;">
+                            {{ conversacion_seleccionada.form_mensaje }}
+                        </div>
+                        <div class="w-20" style="width: 8%;">
+                            <button type="submit" class="btn btn-custom w-100">Enviar</button>
+                        </div>
                     </div>
                 </form>
             {% else %}
@@ -109,6 +120,7 @@
 </div>
 
 <script>
+    
     document.addEventListener('DOMContentLoaded', function () {
         const formEnviarMensaje = document.getElementById('formEnviarMensaje');
         const textAreaMensaje = formEnviarMensaje.querySelector('textarea');

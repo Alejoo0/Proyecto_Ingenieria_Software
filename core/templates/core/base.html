@@ -25,7 +25,7 @@
         <nav class="navbar navbar-expand-lg custom-navbar navbar-dark">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">
-                    <img src="{% static 'core/img/logo_SCHOLAR_FLAME.jpg' %}" id="Logo" alt="Logo" class="logo">
+                    <img src="{% static 'core/img/logo_SCHOLAR_FLAME.jpg' %}" id="Logo" alt="Logo" class="logo rounded">
                 </a>
                 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,7 +42,10 @@
                             <a class="nav-link" href="#">Noticias</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'bandeja_entrada'%}">Mensajes</a>
+                            <a href="{% url 'bandeja_entrada' %}" class="nav-link">Mensajes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'notificaciones' %}">Notificaciones</a>
                         </li>
                     </ul>
                     
@@ -51,11 +54,15 @@
                         {% if user.is_authenticated %}
         
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Educación {{ nivel_educacional }} </a>
-                        </li>
-                        
-                        <li class="nav-item">
                             <a class="nav-link" href="#"> ¡Hola!  {{ user.username }} </a>
+                        </li>
+
+                        <li class="nav-item">
+                            {% if request.user.usuariodetalles.es_estudiante %}
+                                <a class="nav-link" href="#">Educación {{ nivel_educacional }} </a>
+                            {% else %}
+                                <a class="nav-link" href="#">Profesor</a>
+                            {% endif %}
                         </li>
         
                         <li class="nav-item">
@@ -86,9 +93,9 @@
         {% block content %}
         {% endblock %}
 
-        <footer class=" py-3 w-100 custom-footer">
+        <footer class="py-3 w-100 custom-footer">
             <div class="container">
-                <span class="text-muted">&copy; Scholar Flame</span>
+                <span>&copy; Scholar Flame</span>
             </div>
         </footer>
     </div>

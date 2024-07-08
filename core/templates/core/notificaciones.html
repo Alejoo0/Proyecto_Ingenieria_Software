@@ -1,0 +1,22 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+    <div class="container mb-auto">
+        <h3 class="my-4">Notificaciones</h3>
+        <div class="card-container" style="overflow-y: scroll; max-height: 80vh;">
+            {% if mensajes_recibidos %}
+                {% for mensaje in mensajes_recibidos %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ mensaje.remitente }}</h5>
+                            <p class="card-text">{{ mensaje.timestamp|naturaltime }}</p>
+                            <p class="card-text">{{ mensaje.contenido|truncatechars:150 }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

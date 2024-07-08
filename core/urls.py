@@ -9,4 +9,5 @@ urlpatterns = [
     path('bandeja_entrada/', views.bandeja_entrada, name='bandeja_entrada'),
     path('enviar_mensaje/<int:usuario_id>/', views.enviar_mensaje, name='enviar_mensaje'),
     path('crear_conversacion/', views.crear_conversacion, name='crear_conversacion'),
+    path('notificaciones/', views.notificaciones, name='notificaciones'),
 ]
