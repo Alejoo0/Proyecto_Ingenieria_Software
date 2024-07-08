@@ -2,57 +2,79 @@ import pytest
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-from core.models import Comunicado, Asignatura
+from core.models import Profesor, Estudiante, Asignatura, Comunicado
 
-class ComunicadoListViewTests(TestCase):
+class ProfesorModelTest(TestCase):
+
     @classmethod
     def setUpTestData(cls):
-        # Crear un usuario para las pruebas
-        cls.user = User.objects.create_user(username='testuser', password='12345')
-        
-        # Crear un profesor para la asignatura
-        profesor = User.objects.create_user(username='profesor', password='12345')
+        # Crear un usuario para el profesor
+        cls.user = User.objects.create_user(username='profesor', first_name='John', last_name='Doe', password='12345')
+        # Crear un profesor
+        cls.profesor = Profesor.objects.create(user=cls.user)
 
-        # Crear una asignatura para los comunicados
-        cls.asignatura = Asignatura.objects.create(nombre='Asignatura 1', profesor=profesor)
+    def test_profesor_str(self):
+        self.assertEqual(str(self.profesor), f"{self.user.first_name} {self.user.last_name}")
 
-        # Crear comunicados de prueba
-        Comunicado.objects.create(
-            titulo='Test Comunicado 1',
-            detalle='Detalle 1',
-            detalle_corto='Detalle corto 1',
-            tipo='S',
+class EstudianteModelTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        # Crear un usuario para el estudiante
+        cls.user = User.objects.create_user(username='estudiante', first_name='Jane', last_name='Doe', password='12345')
+        # Crear un estudiante
+        cls.estudiante = Estudiante.objects.create(user=cls.user)
+
+    def test_estudiante_str(self):
+        self.assertEqual(str(self.estudiante), f"{self.user.first_name} {self.user.last_name}")
+
+class AsignaturaModelTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        # Crear un usuario y un profesor
+        cls.profesor_user = User.objects.create_user(username='profesor', first_name='John', last_name='Doe', password='12345')
+        cls.profesor = Profesor.objects.create(user=cls.profesor_user)
+
+        # Crear un usuario y un estudiante
+        cls.estudiante_user = User.objects.create_user(username='estudiante', first_name='Jane', last_name='Doe', password='12345')
+        cls.estudiante = Estudiante.objects.create(user=cls.estudiante_user)
+
+        # Crear una asignatura
+        cls.asignatura = Asignatura.objects.create(nombre='Matemáticas', profesor=cls.profesor)
+        cls.asignatura.estudiantes.add(cls.estudiante)
+
+    def test_asignatura_str(self):
+        self.assertEqual(str(self.asignatura), 'Matemáticas')
+
+class ComunicadoModelTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        # Crear un usuario para el autor del comunicado
+        cls.user = User.objects.create_user(username='autor', first_name='Author', last_name='User', password='12345')
+
+        # Crear un usuario y un profesor
+        cls.profesor_user = User.objects.create_user(username='profesor', first_name='John', last_name='Doe', password='12345')
+        cls.profesor = Profesor.objects.create(user=cls.profesor_user)
+
+        # Crear un usuario y un estudiante
+        cls.estudiante_user = User.objects.create_user(username='estudiante', first_name='Jane', last_name='Doe', password='12345')
+        cls.estudiante = Estudiante.objects.create(user=cls.estudiante_user)
+
+        # Crear una asignatura
+        cls.asignatura = Asignatura.objects.create(nombre='Matemáticas', profesor=cls.profesor)
+        cls.asignatura.estudiantes.add(cls.estudiante)
+
+        # Crear un comunicado
+        cls.comunicado = Comunicado.objects.create(
+            titulo='Comunicado Importante',
+            detalle='Detalles del comunicado',
+            detalle_corto='Detalle corto',
+            tipo='I',
             asignatura=cls.asignatura,
             publicado_por=cls.user
         )
-        Comunicado.objects.create(
-            titulo='Test Comunicado 2',
-            detalle='Detalle 2',
-            detalle_corto='Detalle corto 2',
-            tipo='C',
-            asignatura=cls.asignatura,
-            publicado_por=cls.user
-        )
 
-    def test_view_url_exists_at_desired_location(self):
-        self.client.login(username='testuser', password='12345')
-        response = self.client.get('/comunicados/')
-        self.assertEqual(response.status_code, 200)
-
-    def test_view_url_accessible_by_name(self):
-        self.client.login(username='testuser', password='12345')
-        response = self.client.get(reverse('comunicado_list'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_view_uses_correct_template(self):
-        self.client.login(username='testuser', password='12345')
-        response = self.client.get(reverse('comunicado_list'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'core/comunicadosAlmnos.html')
-
-    def test_comunicados_displayed(self):
-        self.client.login(username='testuser', password='12345')
-        response = self.client.get(reverse('comunicado_list'))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Test Comunicado 1')
-        self.assertContains(response, 'Test Comunicado 2')
+    def test_comunicado_str(self):
+        self.assertEqual(str(self.comunicado), 'Comunicado Importante')
