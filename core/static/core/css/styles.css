@@ -24,10 +24,6 @@ small{
     background: linear-gradient(120deg, #e85c04, #9a031e);
 }
 
-.fondo {
-    height: 80vh;
-}
-
 .card-img-top{
     max-width: 14vh;
 }
