@@ -92,7 +92,6 @@ small {
     border-color: #f5c6cb;
 }
 
-/* Estilos para mensajes del remitente */
 .remite {
     background-color: #835725;
     color: #fff;
@@ -103,7 +102,6 @@ small {
     clear: both; /* Evita que otros elementos floten al lado */
 }
 
-/* Estilos para mensajes del destinatario */
 .destino {
     background-color: #153f4b;
     color: #fff;

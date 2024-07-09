@@ -19,11 +19,15 @@
                     <a href="{% url 'bandeja_entrada' %}?usuario_id={{ conversacion.usuario.id }}" class="text-decoration-none">
                         <div class="card mb-1">
                             <div class="card-body">
-                                <h6 class="card-title">{{ conversacion.usuario.first_name }} {{ conversacion.usuario.last_name }}</h6>
-                                {% with conversacion.mensaje_set.last as ultimo_mensaje %}
-                                    <p class="card-text fs-small">{{ contenido_ultimo_mensaje|truncatechars:30 }}</p>
-                                    <span class="card-text text-muted">{{ hora_ultimo_mensaje|naturaltime }}</span>
-                                {% endwith %}
+                                <h6 class="card-title d-flex justify-content-between">{{ conversacion.usuario.first_name }} {{ conversacion.usuario.last_name }}
+                                    <form method="post" action="{% url 'bandeja_entrada' %}?usuario_id={{ conversacion.usuario.id }}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="accion" value="eliminar_conversacion">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash3-fill"></i>
+                                            </button>
+                                    </form>
+                                </h6>
                             </div>
                         </div>
                     </a>

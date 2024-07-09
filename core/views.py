@@ -61,18 +61,14 @@ def bandeja_entrada(request):
     if request.method == 'POST':
         if 'accion' in request.POST and request.POST['accion'] == 'eliminar_conversacion':
             usuario_id = request.POST.get('usuario_id')
-            
-            # Verificar si el usuario_id es válido y no está vacío
-            if usuario_id is None:
-                messages.error(request, 'No se proporcionó un ID de usuario válido.')
-                return redirect('bandeja_entrada')
-
-            try:
-                usuario_id = int(usuario_id)
-            except ValueError:
-                messages.error(request, 'El ID de usuario proporcionado no es válido.')
-                return redirect('bandeja_entrada')
-
+            if 'usuario_id' in request.GET:
+                usuario_id = request.GET.get('usuario_id')
+                if usuario_id is not None:
+                    try:
+                        usuario_id = int(usuario_id)
+                    except ValueError:
+                        messages.error(request, 'El ID de usuario proporcionado no es válido.')
+                        return redirect('bandeja_entrada')
             try:
                 usuario_destinatario = User.objects.get(id=usuario_id)
             except User.DoesNotExist:
